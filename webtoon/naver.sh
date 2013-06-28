@@ -12,11 +12,14 @@ while [ $# -gt 0 ]; do
 	seq="$1"
 	idx=1
 
+	echo
+	echo "Episode ${seq}"
 	curl -# "http://comic.naver.com/webtoon/detail.nhn?titleId=${titleId}&seq=${seq}" \
 		| egrep -o 'http:\/\/imgcomic[^"]+' \
 		| while read url; do
 			ext="$( echo "${url}" | egrep -o '[^.]+$' )"
 			filename="$(printf '%03d-%02d.%s' "${seq}" "${idx}" "${ext}")"
+			echo "${filename} <-- ${url}"
 			curl -# "${url}" > "${filename}"
 			idx=$((idx+1))
 		done

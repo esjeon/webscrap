@@ -15,6 +15,9 @@ curl -# "http://cartoon.media.daum.net/webtoon/rss/${title}" \
 	| sed -n "${selector}" | sed 'N;s/\n/\t/' \
 	| while read episode episode_id; do
 		idx=1
+
+		echo
+		echo "Episode ${episode} ${episode_id}"
 		curl -# "http://cartoon.media.daum.net/webtoon/viewer_images.js?webtoon_episode_id=${episode_id}" \
 			-A 'Mozilla/5.0 (X11; Linux x86_64; rv:21.0) Gecko/20100101 Firefox/21.0' \
 			-b "WEBTOON_VIEW=MTAuMTA%3D" \
