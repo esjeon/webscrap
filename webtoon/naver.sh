@@ -17,7 +17,7 @@ while [ $# -gt 0 ]; do
 		| while read url; do
 			ext="$( echo "${url}" | egrep -o '[^.]+$' )"
 			filename="$(printf '%03d-%02d.%s' "${seq}" "${idx}" "${ext}")"
-			curl "${url}" > "${filename}"
+			curl -# "${url}" > "${filename}"
 			idx=$((idx+1))
 		done
 
