@@ -24,7 +24,7 @@ curl -# "http://cartoon.media.daum.net/webtoon/rss/${title}" \
 			| sed -n '/url/ p' \
 			| egrep -o 'http:\/\/[^"]+' \
 			| while read url; do
-				filename="$(printf '%03d-%02d.jpg' "${episode}" "${idx}")"
+				filename="$(printf '%s-%03d-%02d.jpg' "${title}" "${episode}" "${idx}")"
 				echo "${filename} <-- ${url}"
 				curl -# "${url}" > "${filename}"
 				idx=$((idx + 1))
