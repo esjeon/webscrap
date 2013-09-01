@@ -32,6 +32,9 @@ webget() {
 urldecode() {
 	php -r 'print(urldecode(file_get_contents("php://stdin")));'
 }
+urlencode() {
+	php -r 'print(urlencode(file_get_contents("php://stdin")));'
+}
 
 firefox_getcookies() {
 	log " [FF  ] Cookies"
@@ -55,6 +58,18 @@ firefox_getcookies() {
 	sqlite3 "${db}" "${query}" | awk "${filter}"
 }
 
+nico_login() {
+	log " [NICO] login ${1} (password)"
+	mail="$(echo -n "${1}" | urlencode)"
+	pass="$(echo -n "${2}" | urlencode)"
+
+	webget \
+		--secure-protocol=TLSv1 \
+		--post-data="mail=${mail}&password=${pass}" \
+		-O - \
+		'https://secure.nicovideo.jp/secure/login?site=niconico'
+}
+
 nico_watch() {
 	log " [NICO] watch ${1}"
 	webget -O - "http://www.nicovideo.jp/watch/${1}"
@@ -71,6 +86,25 @@ nico_getflv() {
 nico_getthumbinfo() {
 	log " [NICO] getthumbinfo ${1}"
 	webget -O - "http://ext.nicovideo.jp/api/getthumbinfo/${1}"
+}
+
+nicosh_login() {
+	log " [NCSH] login "
+
+	if grep user_session "${MY}cookies.txt" &>/dev/null; then
+		info "Already logged in"
+		return
+	fi
+
+	read -p "E-Mail   : " mail
+	read -s -p "Password : " pass
+	echo
+	nico_login "${mail}" "${pass}"
+
+	if ! grep user_session "${MY}cookies.txt" &>/dev/null; then
+		info "Login failed"
+		exit 1
+	fi
 }
 
 nicosh_getvideo() {
@@ -117,6 +151,6 @@ declare -fx cleanup
 trap 'cleanup' EXIT
 
 firefox_getcookies > "${MY}cookies.txt"
-
+nicosh_login
 nicosh_getvideo "$@"
 
