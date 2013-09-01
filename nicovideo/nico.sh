@@ -9,6 +9,11 @@ MY="/tmp/nico-$$-"
 log() {
 	printf "$@\n" >&2
 }
+info() {
+	fmt="$1"
+	shift 1
+	printf "\t --> ${fmt}\n" "$@" >&2
+}
 
 webgetV() {
 	wget \
@@ -29,7 +34,7 @@ urldecode() {
 }
 
 firefox_getcookies() {
-	log " [FF] Cookies"
+	log " [FF  ] Cookies"
 
 	local db query filter
 	db="$(ls ~/.mozilla/firefox/**/cookies.sqlite | head -n 1)"
@@ -75,7 +80,7 @@ nicosh_getvideo() {
 	vid="$1"
 
 	if [[ ! "${vid}" =~ sm[0-9]* ]]; then
-		echo "Invalid video id '${vid}'"
+		info "Invalid video id '%s'" "${vid}"
 		return 1
 	fi
 
@@ -83,13 +88,13 @@ nicosh_getvideo() {
 
 	url="$(cat "${MY}${vid}.url")"
 	if [[ -z "${url}" ]]; then
-		echo "Failed to retrieve video url"
+		info "Failed to retrieve video url"
 		return 2
 	fi
-	printf "\t --> %s\n" "${url}"
+	info "Video URL: %s" "${url}"
 
 	if [[ "${url}" =~ 'low' ]]; then
-		printf "\t --> %s\n" "economy mode"
+		info "Economy mode"
 		qual='.low'
 	fi
 
@@ -105,7 +110,7 @@ nicosh_getvideo() {
 
 
 cleanup() {
-	log " Cleaning..."
+	log " [    ] Cleaning up... "
 	rm -rf "${MY}"*
 }
 declare -fx cleanup
