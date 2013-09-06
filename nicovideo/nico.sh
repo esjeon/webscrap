@@ -99,7 +99,7 @@ nicosh_login() {
 	read -p "E-Mail   : " mail
 	read -s -p "Password : " pass
 	echo
-	nico_login "${mail}" "${pass}"
+	nico_login "${mail}" "${pass}" > /dev/null
 
 	if ! grep user_session "${MY}cookies.txt" &>/dev/null; then
 		info "Login failed"
